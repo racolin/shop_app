@@ -20,6 +20,7 @@ class _OrderScreenState extends State<OrderScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
+    Provider.of<Orders>(context, listen: false).fetchOrders();
     orders = Provider.of<Orders>(context);
 
     isExpandList.addAll(orders.items.map((e) => false));
@@ -27,6 +28,7 @@ class _OrderScreenState extends State<OrderScreen> {
 
   @override
   void initState() {
+    Provider.of<Orders>(context, listen: false).fetchOrders();
     super.initState();
   }
 
@@ -70,29 +72,27 @@ class _OrderScreenState extends State<OrderScreen> {
                   },
                   body: Container(
                     padding: const EdgeInsets.all(16),
-                    child: Expanded(
-                      child: Column(
-                        children: orders.items[i].carts
-                            .map(
-                              (e) => Container(
-                                padding: const EdgeInsets.all(16),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(e.title),
-                                    Text(
-                                      '${e.amount}x ' +
-                                          NumberFormat.currency(
-                                                  locale: "en_US", symbol: "\$")
-                                              .format(e.price),
-                                    ),
-                                  ],
-                                ),
+                    child: Column(
+                      children: orders.items[i].carts
+                          .map(
+                            (e) => Container(
+                              padding: const EdgeInsets.all(16),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(e.title),
+                                  Text(
+                                    '${e.amount}x ' +
+                                        NumberFormat.currency(
+                                                locale: "en_US", symbol: "\$")
+                                            .format(e.price),
+                                  ),
+                                ],
                               ),
-                            )
-                            .toList(),
-                      ),
+                            ),
+                          )
+                          .toList(),
                     ),
                   ),
                   isExpanded: isExpandList[i],

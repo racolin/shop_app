@@ -7,6 +7,7 @@ import 'package:section__8/providers/order.dart';
 class CartScreen extends StatelessWidget {
   const CartScreen({Key? key}) : super(key: key);
   static const String route = "/cart";
+
   @override
   Widget build(BuildContext context) {
     final Cart cart = Provider.of<Cart>(context);
@@ -56,12 +57,16 @@ class CartScreen extends StatelessWidget {
                         ),
                         ElevatedButton(
                           onPressed: () {
-                            orders.addOrderItem(
-                              DateTime.now().toString(),
-                              cart.items,
-                              DateTime.now(),
-                            );
-                            cart.clear();
+                            if (cart.calculateTotal() > 0) {
+                              orders
+                                  .addOrderItem(
+                                cart.items,
+                                DateTime.now(),
+                              )
+                                  .then((value) {
+                                cart.clear();
+                              });
+                            }
                           },
                           style: ButtonStyle(
                             elevation: MaterialStateProperty.all(0),
@@ -88,6 +93,42 @@ class CartScreen extends StatelessWidget {
               child: ListView.builder(
                 itemBuilder: (context, index) {
                   return Dismissible(
+                    confirmDismiss: (direction) {
+                      return showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            actionsPadding:
+                                const EdgeInsets.symmetric(horizontal: 16),
+                            actions: [
+                              ElevatedButton(
+                                child: const Text('Cancel'),
+                                onPressed: () {
+                                  Navigator.pop(context, false);
+                                },
+                              ),
+                              ElevatedButton(
+                                child: const Text('OK'),
+                                onPressed: () {
+                                  Navigator.pop(context, true);
+                                },
+                              ),
+                            ],
+                            title: const Text(
+                              'Confirm',
+                              style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            content: const Text(
+                                'Are you sure to remove this item cart?'),
+                          );
+                        },
+                      );
+                    },
+                    onDismissed: (direction) {
+                      cart.remove(cart.items[index].id);
+                    },
                     background: Container(
                       color: Colors.red,
                       alignment: Alignment.centerRight,

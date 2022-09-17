@@ -9,9 +9,36 @@ import 'package:section__8/widgets/product_grid_view.dart';
 
 enum FilterType { all, favorite }
 
-class OverviewScreen extends StatelessWidget {
+class OverviewScreen extends StatefulWidget {
   static const String route = '/overview';
   const OverviewScreen({Key? key}) : super(key: key);
+
+  @override
+  State<OverviewScreen> createState() => _OverviewScreenState();
+}
+
+class _OverviewScreenState extends State<OverviewScreen> {
+  bool _initted = false;
+  bool _loading = false;
+  late Cart c;
+
+  @override
+  void initState() {
+    c = Provider.of<Cart>(context, listen: false);
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() async {
+    if (!_initted) {
+      _loading = true;
+      await Provider.of<Products>(context).fetchProducts();
+      await c.fetchCarts();
+      _loading = false;
+    }
+    _initted = true;
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,13 +84,22 @@ class OverviewScreen extends StatelessWidget {
           )
         ],
       ),
-      body: const ProductGridView(),
+      body: Stack(
+        children: [
+          const ProductGridView(),
+          if (_loading)
+            Container(
+              height: double.infinity,
+              width: double.infinity,
+              color: Colors.black.withOpacity(0.7),
+              alignment: Alignment.center,
+              child: const CircularProgressIndicator(),
+            ),
+        ],
+      ),
       drawer: const MainDrawer(),
       floatingActionButton: FloatingActionButton(
-          onPressed: (() {
-            products.item[0].toggleFavorite();
-          }),
-          child: const Icon(Icons.add)),
+          onPressed: (() {}), child: const Icon(Icons.add)),
     );
   }
 }

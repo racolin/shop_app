@@ -5,7 +5,7 @@ import 'package:section__8/screens/product_screen.dart';
 
 import '../models/product.dart';
 
-class ProductItem extends StatelessWidget {
+class ProductItem extends StatefulWidget {
   // final Product product;
   const ProductItem({
     Key? key,
@@ -13,9 +13,23 @@ class ProductItem extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<ProductItem> createState() => _ProductItemState();
+}
+
+class _ProductItemState extends State<ProductItem> {
+  var adding = false;
+  var product;
+  var cart;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    product = Provider.of<Product>(context, listen: false);
+    cart = Provider.of<Cart>(context);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final product = Provider.of<Product>(context, listen: false);
-    final cart = Provider.of<Cart>(context);
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: GridTile(
@@ -27,7 +41,17 @@ class ProductItem extends StatelessWidget {
           leading: Consumer<Product>(
             builder: (ctx, value, child) => IconButton(
               onPressed: () {
-                product.toggleFavorite();
+                product.toggleFavorite().then((_) {
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('Change favorite success!'),
+                  ));
+                }).catchError((e) {
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('Change favorite fail!'),
+                  ));
+                });
               },
               icon: Icon(
                 product.isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -36,9 +60,33 @@ class ProductItem extends StatelessWidget {
             ),
           ),
           trailing: IconButton(
-            onPressed: () {
-              cart.addCartItem(product.id, product.title, product.price, 1);
-            },
+            onPressed: adding
+                ? null
+                : () {
+                    setState(() {
+                      adding = true;
+                    });
+                    cart
+                        .addCartItem(
+                            product.id, product.title, product.price, 1)
+                        .then((value) {
+                      setState(() {
+                        adding = false;
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text('Added success!'),
+                            action: SnackBarAction(
+                              label: 'UNDO',
+                              onPressed: () {
+                                cart.undoItem(product.id);
+                              },
+                            ),
+                          ),
+                        );
+                      });
+                    });
+                  },
             icon: Icon(
               Icons.shopping_cart,
               color: Theme.of(context).colorScheme.secondary,

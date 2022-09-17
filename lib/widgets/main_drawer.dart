@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:section__8/screens/manage_screen.dart';
 import 'package:section__8/screens/order_screen.dart';
 import 'package:section__8/screens/overview_screen.dart';
 
@@ -35,9 +36,16 @@ class MainDrawer extends StatelessWidget {
                   leading: const Icon(Icons.list_alt),
                   title: const Text('Order'),
                 ),
+                ListTile(
+                  onTap: () {
+                    Navigator.of(context).pushNamed(ManageScreen.route);
+                  },
+                  leading: const Icon(Icons.edit),
+                  title: const Text('Manage Products'),
+                ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
