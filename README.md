@@ -1,5 +1,5 @@
 # MyShop
-** Ứng dụng sử dụng các tính năng của firebase bao gồm Authentication và Realtime Database **
+*** Ứng dụng sử dụng các tính năng của firebase bao gồm Authentication và Realtime Database ***
 
 ## Chức năng hỗ trợ cho nhiều người dùng sử dụng:
 
