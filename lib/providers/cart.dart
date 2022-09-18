@@ -4,6 +4,18 @@ import '../config/api.dart';
 import 'package:http/http.dart' as http;
 
 class Cart extends ChangeNotifier {
+  var _token;
+  set token(String token) {
+    _token = token;
+    notifyListeners();
+  }
+
+  var _localId;
+  set localId(String localId) {
+    _localId = localId;
+    notifyListeners();
+  }
+
   final List<CartItem> _items = [];
 
   var _loading = false;
@@ -19,10 +31,12 @@ class Cart extends ChangeNotifier {
       int index =
           _items.indexWhere((element) => element.productId == productId);
       if (index != -1) {
-        _items[index].setAmount(_items[index]._amount + amount);
+        _items[index]
+            .setAmount(_token, _localId, _items[index]._amount + amount);
         notifyListeners();
       } else {
-        var res = await http.post(Uri.parse('$BASE/carts.json'),
+        var res = await http.post(
+            Uri.parse('$BASE/carts/$_localId.json?auth=$_token'),
             body: json.encode({
               'productId': productId,
               'title': title,
@@ -41,7 +55,9 @@ class Cart extends ChangeNotifier {
   }
 
   Future<void> fetchCarts() async {
-    var res = await http.get(Uri.parse('$BASE/carts.json'));
+    var res =
+        await http.get(Uri.parse('$BASE/carts/$_localId.json?auth=$_token'));
+    print('$BASE/carts.json?auth=$_token================');
     if (res.statusCode <= 400) {
       var map = json.decode(res.body) as Map<String, dynamic>?;
       _items.clear();
@@ -66,7 +82,8 @@ class Cart extends ChangeNotifier {
   Future<void> fetchCart(String id) async {
     int index = _items.indexWhere((element) => element.id == id);
     if (index != -1) {
-      var res = await http.get(Uri.parse('$BASE/carts/$id.json'));
+      var res = await http
+          .get(Uri.parse('$BASE/carts/$_localId/$id.json?auth=$_token'));
       if (res.statusCode <= 400) {
         var map = json.decode(res.body) as Map<String, dynamic>;
         _items.clear();
@@ -84,7 +101,8 @@ class Cart extends ChangeNotifier {
   }
 
   Future<void> clear() async {
-    var res = await http.delete(Uri.parse('$BASE/carts.json'));
+    var res =
+        await http.delete(Uri.parse('$BASE/carts/$_localId.json?auth=$_token'));
     if (res.statusCode <= 400) {
       _items.clear();
       notifyListeners();
@@ -96,8 +114,9 @@ class Cart extends ChangeNotifier {
   List<CartItem> get items => [..._items];
 
   Future<void> remove(String id) async {
-    int index = _items.indexWhere((e) => e.id == id);
-    var res = await http.delete(Uri.parse('$BASE/carts/$id.json'));
+    int index = _items.indexWhere((e) => e.productId == id);
+    var res = await http
+        .delete(Uri.parse('$BASE/carts/$_localId/$id.json?auth=$_token'));
     if (res.statusCode <= 400) {
       _items.removeAt(index);
       notifyListeners();
@@ -117,7 +136,7 @@ class Cart extends ChangeNotifier {
       if (count <= 0) {
         remove(id);
       } else {
-        _items[index].setAmount(count);
+        _items[index].setAmount(_token, _localId, count);
         notifyListeners();
       }
     }
@@ -140,11 +159,11 @@ class CartItem {
 
   int get amount => _amount;
 
-  Future<void> setAmount(int amount) async {
+  Future<void> setAmount(String token, String localId, int amount) async {
     int old = _amount;
     _amount = amount;
     var res = await http.patch(
-      Uri.parse('$BASE/carts/$id.json'),
+      Uri.parse('$BASE/carts/$localId/$id.json?auth=$token'),
       body: json.encode({
         'amount': _amount,
       }),

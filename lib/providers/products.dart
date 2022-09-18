@@ -1,11 +1,24 @@
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
-import 'package:section__8/models/product.dart';
+import 'package:section__8/exception/http_exception.dart';
+import 'package:section__8/providers/product.dart';
 import 'package:section__8/screens/overview_screen.dart';
 import 'dart:convert';
 import '../config/api.dart';
 
 class Products with ChangeNotifier {
+  var _token;
+  set token(String token) {
+    _token = token;
+    notifyListeners();
+  }
+
+  var _localId;
+  set localId(String localId) {
+    _localId = localId;
+    notifyListeners();
+  }
+
   FilterType _type = FilterType.all;
   List<Product> _items = [];
 
@@ -13,29 +26,33 @@ class Products with ChangeNotifier {
 
   FilterType get type => _type;
 
-  Future<void> fetchProducts() async {
-    var res = await http.get(Uri.parse('$BASE/products.json'));
+  Future<void> fetchProducts([bool filterByCreater = false]) async {
+    String filter =
+        filterByCreater ? '&orderBy="creator"&equalTo="$_localId"' : '';
+    var res =
+        await http.get(Uri.parse('$BASE/products.json?auth=$_token$filter'));
+    var favorites = await getFavorites();
     var map = json.decode(res.body) as Map<String, dynamic>;
     _items.clear();
-    map.forEach(
-      (id, data) => _items.add(
-        Product(
-          id: id,
-          title: data['title'],
-          description: data['description'],
-          price: data['price'],
-          imageUrl: data['imageUrl'],
-          isFavorite: data['isFavorite'],
-        ),
-      ),
-    );
+    map.forEach((id, data) {
+      _items.add(Product(
+        id: id,
+        title: data['title'],
+        description: data['description'],
+        price: data['price'],
+        imageUrl: data['imageUrl'],
+        isFavorite:
+            favorites[id] != null && favorites[id] is bool && favorites[id],
+      ));
+    });
     notifyListeners();
   }
 
   Future<void> fetchProduct(String id) async {
     int index = _items.indexWhere((element) => id == element.id);
     if (index != -1) {
-      var res = await http.get(Uri.parse('$BASE/products/$id.json'));
+      var res =
+          await http.get(Uri.parse('$BASE/products/$id.json?auth=$_token'));
       var map = json.decode(res.body) as Map<String, dynamic>;
       _items[index] = Product(
         id: id,
@@ -43,10 +60,29 @@ class Products with ChangeNotifier {
         description: map['description'],
         price: map['price'],
         imageUrl: map['imageUrl'],
-        isFavorite: map['isFavorite'],
+        isFavorite: await getFavorite(id),
       );
       notifyListeners();
     }
+  }
+
+  Future<bool> getFavorite(String id) async {
+    var res = await http.get(
+        Uri.parse('$BASE/favoriteProducts/$_localId/$id.json?auth=$_token'));
+    if (res.statusCode > 400) {
+      throw HttpException('Can\'t get favorite!');
+    }
+    bool? data = json.decode(res.body) as bool?;
+    return data ?? false;
+  }
+
+  Future<Map<String, dynamic>> getFavorites() async {
+    var res = await http
+        .get(Uri.parse('$BASE/favoriteProducts/$_localId.json?auth=$_token'));
+    print(res.body);
+    var data = json.decode(res.body) as Map<String, dynamic>?;
+
+    return data ?? {};
   }
 
   List<Product> filterItem() {
@@ -60,11 +96,6 @@ class Products with ChangeNotifier {
 
   set type(FilterType val) {
     _type = val;
-
-    print(item.fold(
-        "",
-        (previousValue, element) =>
-            "$previousValue ${element.title}--${element.isFavorite.toString()},"));
     notifyListeners();
   }
 
@@ -80,13 +111,12 @@ class Products with ChangeNotifier {
 
   Future<void> addProduct(Product value) async {
     var res = await http
-        .post(Uri.parse('$BASE/products.json'),
+        .post(Uri.parse('$BASE/products.json?auth=$_token'),
             body: json.encode({
               'title': value.title,
               'description': value.description,
               'price': value.price,
               'imageUrl': value.imageUrl,
-              'isFavorite': value.isFavorite,
             }))
         .catchError((error) {
       throw error;
@@ -105,13 +135,12 @@ class Products with ChangeNotifier {
     if (index != -1) {
       var res = await http.patch(
           Uri.parse(
-            '$BASE/products/${product.id}.json',
+            '$BASE/products/${product.id}.json?auth=$_token',
           ),
           body: json.encode({
             'title': product.title,
             'description': product.description,
             'price': product.price,
-            'isFavorite': product.isFavorite,
             'imageUrl': product.imageUrl,
           }));
       _items.removeAt(index);
@@ -125,7 +154,8 @@ class Products with ChangeNotifier {
     if (index != -1) {
       var product = _items.removeAt(index);
       notifyListeners();
-      var res = await http.delete(Uri.parse('$BASE/products/$id.json'));
+      var res =
+          await http.delete(Uri.parse('$BASE/products/$id.json?auth=$_token'));
       if (res.statusCode >= 400) {
         _items.insert(index, product);
         notifyListeners();

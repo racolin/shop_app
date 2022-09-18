@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:section__8/providers/auth.dart';
 import 'package:section__8/providers/cart.dart';
 import 'package:section__8/screens/product_screen.dart';
 
-import '../models/product.dart';
+import '../providers/product.dart';
 
 class ProductItem extends StatefulWidget {
   // final Product product;
@@ -19,6 +20,7 @@ class ProductItem extends StatefulWidget {
 class _ProductItemState extends State<ProductItem> {
   var adding = false;
   var product;
+  var auth;
   var cart;
 
   @override
@@ -26,6 +28,7 @@ class _ProductItemState extends State<ProductItem> {
     super.didChangeDependencies();
     product = Provider.of<Product>(context, listen: false);
     cart = Provider.of<Cart>(context);
+    auth = Provider.of<Auth>(context);
   }
 
   @override
@@ -41,7 +44,7 @@ class _ProductItemState extends State<ProductItem> {
           leading: Consumer<Product>(
             builder: (ctx, value, child) => IconButton(
               onPressed: () {
-                product.toggleFavorite().then((_) {
+                product.toggleFavorite(auth.token, auth.localId).then((_) {
                   ScaffoldMessenger.of(context).hideCurrentSnackBar();
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text('Change favorite success!'),

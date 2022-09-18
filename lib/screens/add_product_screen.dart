@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:section__8/models/product.dart';
+import 'package:section__8/providers/product.dart';
 import 'package:section__8/providers/products.dart';
 import 'package:section__8/widgets/main_drawer.dart';
 
@@ -19,23 +19,20 @@ class _AddProductScreenState extends State<AddProductScreen> {
   final urlController = TextEditingController();
   final _keyForm = GlobalKey<FormState>();
   final _dateTime = DateTime.now();
-  var product;
+  late Product product;
   bool loadding = false;
   var url = '';
-
-  @override
-  void initState() {
-    product = getEmptyProduct();
-    super.initState();
-  }
 
   @override
   void didChangeDependencies() {
     String? id = ModalRoute.of(context)?.settings.arguments as String?;
     urlController.text = "";
+    product = getEmptyProduct();
     if (id != null) {
-      product = Provider.of<Products>(context).getProductById(id);
-      urlController.text = (product as Product).imageUrl;
+      Product? p = Provider.of<Products>(context).getProductById(id);
+      if (p != null) {
+        urlController.text = (product as Product).imageUrl;
+      }
     }
     super.didChangeDependencies();
   }

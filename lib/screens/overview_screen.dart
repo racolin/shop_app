@@ -32,7 +32,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
   void didChangeDependencies() async {
     if (!_initted) {
       _loading = true;
-      await Provider.of<Products>(context).fetchProducts();
+      await Provider.of<Products>(context, listen: false).fetchProducts();
       await c.fetchCarts();
       _loading = false;
     }

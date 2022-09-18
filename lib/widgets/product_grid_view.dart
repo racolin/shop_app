@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:section__8/models/product.dart';
+import 'package:section__8/providers/product.dart';
 import 'package:section__8/providers/products.dart';
 import 'package:section__8/widgets/product_item.dart';
 

@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:section__8/models/product.dart';
+import 'package:section__8/providers/product.dart';
 import 'package:section__8/screens/overview_screen.dart';
 
 class FilterProducts with ChangeNotifier {
