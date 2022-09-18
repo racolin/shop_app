@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:section__8/config/api.dart';
-import 'package:section__8/exception/http_exception.dart';
+import '../config/api.dart';
+import '../exception/http_exception.dart';
 
 class Auth with ChangeNotifier {
   String _idToken = '';

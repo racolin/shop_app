@@ -1,11 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:section__8/providers/auth.dart';
-import 'package:section__8/screens/auth_screen.dart';
-import 'package:section__8/screens/manage_screen.dart';
-import 'package:section__8/screens/order_screen.dart';
-import 'package:section__8/screens/overview_screen.dart';
+import '../providers/auth.dart';
+import '../screens/auth_screen.dart';
+import '../screens/manage_screen.dart';
+import '../screens/order_screen.dart';
+import '../screens/overview_screen.dart';
 
 class MainDrawer extends StatelessWidget {
   const MainDrawer({Key? key}) : super(key: key);

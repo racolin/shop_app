@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:section__8/providers/auth.dart';
-import 'package:section__8/providers/cart.dart';
-import 'package:section__8/screens/product_screen.dart';
+import '../providers/auth.dart';
+import '../providers/cart.dart';
+import '../screens/product_screen.dart';
 
 import '../providers/product.dart';
 

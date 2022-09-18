@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:section__8/providers/products.dart';
+import '../providers/products.dart';
 
 class ProductScreen extends StatelessWidget {
   static const String route = '/product_detail';

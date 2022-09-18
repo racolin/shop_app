@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:section__8/providers/products.dart';
-import 'package:section__8/screens/add_product_screen.dart';
-import 'package:section__8/widgets/main_drawer.dart';
+import '../providers/products.dart';
+import '../screens/add_product_screen.dart';
+import '../widgets/main_drawer.dart';
 
 class ManageScreen extends StatelessWidget {
   static const String route = '/manage';

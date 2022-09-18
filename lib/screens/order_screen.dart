@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:section__8/providers/order.dart';
-import 'package:section__8/widgets/main_drawer.dart';
+import '../providers/order.dart';
+import '../widgets/main_drawer.dart';
 
 class OrderScreen extends StatefulWidget {
   static const String route = "/order";

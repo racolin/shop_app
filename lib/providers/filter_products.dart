@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
-import 'package:section__8/providers/product.dart';
-import 'package:section__8/screens/overview_screen.dart';
+import '../providers/product.dart';
+import '../screens/overview_screen.dart';
 
 class FilterProducts with ChangeNotifier {
   FilterType _type = FilterType.all;

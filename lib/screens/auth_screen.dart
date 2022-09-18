@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 
 import 'package:provider/provider.dart';
-import 'package:section__8/exception/http_exception.dart';
-import 'package:section__8/providers/auth.dart';
-import 'package:section__8/screens/overview_screen.dart';
+import '../exception/http_exception.dart';
+import '../providers/auth.dart';
+import '../screens/overview_screen.dart';
 
 enum AuthMode { login, signin }
 

@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:section__8/providers/cart.dart';
+import '../providers/cart.dart';
 import 'dart:convert';
 import '../config/api.dart';
 import 'package:http/http.dart' as http;

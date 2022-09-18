@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:section__8/providers/product.dart';
-import 'package:section__8/providers/products.dart';
-import 'package:section__8/widgets/main_drawer.dart';
+import '../providers/product.dart';
+import '../providers/products.dart';
+import '../widgets/main_drawer.dart';
 
 class AddProductScreen extends StatefulWidget {
   static const String route = '/add_product';

@@ -1,11 +1,11 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:section__8/providers/cart.dart';
-import 'package:section__8/providers/products.dart';
-import 'package:section__8/screens/cart_screen.dart';
-import 'package:section__8/widgets/main_drawer.dart';
-import 'package:section__8/widgets/product_grid_view.dart';
+import '../providers/cart.dart';
+import '../providers/products.dart';
+import '../screens/cart_screen.dart';
+import '../widgets/main_drawer.dart';
+import '../widgets/product_grid_view.dart';
 
 enum FilterType { all, favorite }
 

@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
-import 'package:section__8/exception/http_exception.dart';
-import 'package:section__8/providers/product.dart';
-import 'package:section__8/screens/overview_screen.dart';
+import '../exception/http_exception.dart';
+import '../providers/product.dart';
+import '../screens/overview_screen.dart';
 import 'dart:convert';
 import '../config/api.dart';
 
