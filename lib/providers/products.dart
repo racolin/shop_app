@@ -117,6 +117,7 @@ class Products with ChangeNotifier {
               'description': value.description,
               'price': value.price,
               'imageUrl': value.imageUrl,
+              'creator': _localId,
             }))
         .catchError((error) {
       throw error;
